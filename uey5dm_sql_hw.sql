@@ -1,0 +1,109 @@
+
+#World Database
+
+#Easy:
+#1. List all countries in South America.
+SELECT Name FROM country WHERE Continent = "South America";
+#2. Find the population of 'Germany'.
+SELECT sum(Population) FROM city WHERE CountryCode = "DEU";
+#3. Retrieve all cities in the country 'Japan'.
+SELECT Name FROM city WHERE CountryCode = 'JPN';
+
+#Medium:
+#4. Find the 3 most populated countries in the 'Africa' region.
+SELECT country.name, country.Population FROM country WHERE region = 'Central Africa'
+ORDER BY Population DESC LIMIT 3;
+#5. Retrieve the country and its life expectancy where the population is between 1 and 5
+#million.
+SELECT country.name, LifeExpectancy from country WHERE Population > 1000000 AND Population < 5000000;
+#6. List countries with an official language of 'French'
+SELECT country.Name FROM country
+JOIN countrylanguage ON country.Code = countrylanguage.CountryCode
+WHERE countrylanguage.Language = 'French' AND countrylanguage.IsOfficial = 'T';
+
+#Chinook Database
+
+#Easy:
+#Retrieve all album titles by the artist 'AC/DC'.
+SELECT Title FROM Album WHERE ArtistId = '1';
+#Find the name and email of customers located in 'Brazil'.
+SELECT Firstname, Lastname, Email FROM Customer WHERE country = 'Brazil';
+#List all playlists in the database.
+SELECT * FROM `Playlist`;
+
+#Medium:
+#Find the total number of tracks in the 'Rock' genre.
+SELECT COUNT(*) AS total_tracks
+FROM Track
+WHERE GenreId = '1';
+#List all employees who report to 'Nancy Edwards'.
+SELECT Firstname, Lastname FROM Employee WHERE ReportsTo = '2';
+#Calculate the total sales per customer by summing the total amount in invoices
+SELECT CustomerId, SUM(total) AS total_sales
+FROM Invoice
+GROUP BY CustomerId;
+
+#Part 2: Create your own database
+
+#Design your database: ‘ClassPass’
+
+#Table: Class - Classid, name, instructor, time
+#Table: Customer - customerid, firstname, lastname, email
+#Subscriptions: subscriptionid, customerid, orderdate, total
+
+CREATE TABLE Class(
+    `ClassId` INT NOT NULL AUTO_INCREMENT,
+    `Name` NVARCHAR(10) NOT NULL,
+    `Instructor` INT NOT NULL,
+    CONSTRAINT `PK_Class` PRIMARY KEY  (`ClassId`)
+    );
+CREATE TABLE Customer(
+    `CustomerId` INT NOT NULL AUTO_INCREMENT,
+    `Firstname` NVARCHAR(20) NOT NULL,
+    `Lastname` NVARCHAR(20) NOT NULL,
+    `Email` NVARCHAR(20) NOT NULL,
+    CONSTRAINT `PK_Customer` PRIMARY KEY (`CustomerId`)
+    );
+CREATE TABLE Subscription(
+    `SubscriptionId` INT NOT NULL AUTO_INCREMENT,
+    `CustomerId` int NOT NULL,
+    `Orderdate` NVARCHAR(50) NOT NULL,
+    `Total` int NOT NULL,
+    CONSTRAINT `PK_Subscription` PRIMARY KEY (`SubscriptionId`)
+    );
+
+#Data insertion:
+
+INSERT INTO Class (Name, Instructor)
+VALUES
+('Hit45', 1),
+('Spin', 2),
+('Stretch', 3),
+('Yoga', 4),
+('Cooldown', 5);
+
+INSERT INTO Customer (Firstname, Lastname, Email)
+VALUES
+('Cate', 'Sawkins', 'gmail'),
+('Thomas', 'Rhett', 'yahoo'),
+('Jamie', 'Lee', 'icloud'),
+('Max', 'Sampson', 'gmail'),
+('Lily', 'Rose', 'gmail');
+
+INSERT INTO Subscription (CustomerId, Orderdate, Total)
+VALUES
+(2, '10.2.21', 56),
+(3, '11.17.21', 37),
+(1, '10.7.21', 104),
+(5, '9.5.21', 25),
+(4, '11.4.21', 25);
+
+#Write Queries:
+
+SELECT Class.Name FROM Class WHERE Instructor = ‘2’;
+
+SELECT Sum(Total) AS Total_Revenue FROM Subscription;
+
+SELECT Customer.Firstname, Customer.Lastname, Subscription.Total FROM Customer 
+JOIN Subscription ON Customer.CustomerId = Subscription.CustomerId 
+ORDER BY Subscription.Total DESC;
